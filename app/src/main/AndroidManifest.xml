@@ -6,8 +6,10 @@
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.bird.starryskysudoku.permission.READ_RESULTS" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <queries>
+        <package android:name="com.bird.starryskysudoku" />
         <provider android:authorities="com.bird.starryskysudoku.provider" />
     </queries>
 
@@ -25,6 +27,16 @@
             android:authorities="com.bird.StarrySkyTeaHouse.provider"
             android:exported="true"
             android:readPermission="com.bird.StarrySkyTeaHouse.permission.READ_SESSION" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.bird.StarrySkyTeaHouse.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
 
         <activity
             android:name="com.bird.StarrySkyTeaHouse.MainActivity"

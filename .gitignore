@@ -16,3 +16,6 @@ local.properties
 
 # IDE local files
 /.idea/
+
+# Local brainstorming mockups
+.superpowers/

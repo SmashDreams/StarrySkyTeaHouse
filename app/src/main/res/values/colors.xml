@@ -1,9 +1,15 @@
 <resources>
-    <color name="tea_midnight">#11192F</color>
+    <color name="tea_midnight">#0B1026</color>
+    <color name="tea_deep">#151B3D</color>
     <color name="tea_panel">#1E2A44</color>
+    <color name="tea_panel_soft">#263452</color>
     <color name="tea_gold">#F4C86A</color>
+    <color name="tea_gold_deep">#C9963F</color>
     <color name="tea_mist">#E8E2D4</color>
+    <color name="tea_muted">#B8A98A</color>
     <color name="tea_leaf">#6FBF9A</color>
+    <color name="tea_leaf_deep">#355F4D</color>
+    <color name="tea_line">#334463</color>
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
 </resources>

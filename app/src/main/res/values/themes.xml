@@ -6,7 +6,8 @@
         <item name="colorSecondary">@color/tea_leaf</item>
         <item name="colorSecondaryVariant">@color/tea_panel</item>
         <item name="colorOnSecondary">@color/tea_midnight</item>
-        <item name="android:windowBackground">@color/tea_midnight</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowBackground">@drawable/bg_teahouse_root</item>
         <item name="android:statusBarColor">@color/tea_midnight</item>
         <item name="android:navigationBarColor">@color/tea_midnight</item>
         <item name="android:windowLightStatusBar">false</item>

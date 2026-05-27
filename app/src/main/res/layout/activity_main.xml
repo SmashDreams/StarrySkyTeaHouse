@@ -4,123 +4,294 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/tea_midnight"
+    android:background="@drawable/bg_teahouse_root"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:paddingStart="22dp"
+        android:paddingTop="28dp"
+        android:paddingEnd="22dp"
+        android:paddingBottom="30dp">
 
-        <TextView
-            android:id="@+id/title"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/launcher_title"
-            android:textColor="@color/tea_gold"
-            android:textSize="32sp"
-            android:textStyle="bold" />
+            android:layout_height="210dp">
 
-        <TextView
-            android:id="@+id/subtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/launcher_subtitle"
-            android:textColor="@color/tea_mist"
-            android:textSize="16sp" />
+            <View
+                android:layout_width="190dp"
+                android:layout_height="190dp"
+                android:layout_gravity="top|end"
+                android:background="@drawable/bg_icon_halo"
+                android:alpha="0.72" />
 
-        <TextView
-            android:id="@+id/current_user"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:background="@color/tea_panel"
-            android:padding="16dp"
-            android:textColor="@color/tea_mist"
-            android:textSize="16sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/username_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:autofillHints="username"
-            android:hint="@string/username_hint"
-            android:inputType="text"
-            android:minHeight="48dp"
-            android:textColor="@color/white"
-            android:textColorHint="@color/tea_mist" />
+                <ImageView
+                    android:id="@+id/brand_icon"
+                    android:layout_width="118dp"
+                    android:layout_height="118dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/teahouse_brand" />
 
-        <EditText
-            android:id="@+id/password_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:autofillHints="password"
-            android:hint="@string/password_hint"
-            android:inputType="textPassword"
-            android:minHeight="48dp"
-            android:textColor="@color/white"
-            android:textColorHint="@color/tea_mist" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.12"
+                        android:text="STARRY TEA HOUSE"
+                        android:textAllCaps="true"
+                        android:textColor="@color/tea_gold"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/launcher_title"
+                        android:textColor="@color/tea_mist"
+                        android:textSize="34sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/subtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="3dp"
+                        android:text="@string/launcher_subtitle"
+                        android:textColor="@color/tea_muted"
+                        android:textSize="15sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+            android:background="@drawable/bg_card_primary"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/session_card_title"
+                android:textColor="@color/tea_gold"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/session_card_subtitle"
+                android:textColor="@color/tea_muted"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/current_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_status_chip"
+                android:paddingStart="14dp"
+                android:paddingTop="9dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="9dp"
+                android:textColor="@color/tea_mist"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/username_input"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="18dp"
+                android:autofillHints="username"
+                android:background="@drawable/bg_field"
+                android:hint="@string/username_hint"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textColorHint="@color/tea_muted" />
+
+            <EditText
+                android:id="@+id/password_input"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="12dp"
+                android:autofillHints="password"
+                android:background="@drawable/bg_field"
+                android:hint="@string/password_hint"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textColorHint="@color/tea_muted" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/login_button"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:text="@string/login"
+                    android:textColor="@color/tea_midnight"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/tea_gold"
+                    app:cornerRadius="17dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/register_button"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:text="@string/register"
+                    android:textColor="@color/tea_midnight"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/tea_leaf"
+                    app:cornerRadius="17dp" />
+            </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/login_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/login"
-                app:backgroundTint="@color/tea_gold"
-                android:textColor="@color/tea_midnight" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/register_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_weight="1"
-                android:text="@string/register"
-                app:backgroundTint="@color/tea_leaf"
-                android:textColor="@color/tea_midnight" />
+                android:id="@+id/logout_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/logout"
+                android:textColor="@color/tea_mist"
+                app:backgroundTint="@color/tea_panel_soft"
+                app:cornerRadius="17dp"
+                app:strokeColor="@color/tea_line"
+                app:strokeWidth="1dp" />
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/logout_button"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="@string/logout"
-            app:backgroundTint="@color/tea_panel"
-            android:textColor="@color/tea_mist"
-            app:strokeColor="@color/tea_gold"
-            app:strokeWidth="1dp" />
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_card_game"
+            android:orientation="vertical"
+            android:padding="20dp">
 
-        <TextView
-            android:id="@+id/records_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="@string/records_title"
-            android:textColor="@color/tea_gold"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/records_view"
+                <GridLayout
+                    android:layout_width="82dp"
+                    android:layout_height="82dp"
+                    android:columnCount="3"
+                    android:rowCount="3">
+
+                    <View android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="2dp" android:background="@drawable/bg_sudoku_tile" />
+                    <View android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="2dp" android:background="@drawable/bg_sudoku_tile" />
+                    <View android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="2dp" android:background="@drawable/bg_sudoku_tile" />
+                    <View android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="2dp" android:background="@drawable/bg_sudoku_tile" />
+                    <View android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="2dp" android:background="@drawable/bg_sudoku_tile" />
+                    <View android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="2dp" android:background="@drawable/bg_sudoku_tile" />
+                    <View android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="2dp" android:background="@drawable/bg_sudoku_tile" />
+                    <View android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="2dp" android:background="@drawable/bg_sudoku_tile" />
+                    <View android:layout_width="24dp" android:layout_height="24dp" android:layout_margin="2dp" android:background="@drawable/bg_sudoku_tile" />
+                </GridLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/game_card_title"
+                        android:textColor="@color/tea_mist"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/game_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:textColor="@color/tea_gold"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:lineSpacingExtra="3dp"
+                android:text="@string/game_card_subtitle"
+                android:textColor="@color/tea_mist"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/game_action_button"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/tea_midnight"
+                android:textStyle="bold"
+                app:backgroundTint="@color/tea_gold"
+                app:cornerRadius="18dp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@color/tea_panel"
-            android:minHeight="120dp"
-            android:padding="16dp"
-            android:textColor="@color/tea_mist"
-            android:textSize="15sp" />
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_card_primary"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/records_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/records_title"
+                android:textColor="@color/tea_gold"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/records_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_records_panel"
+                android:minHeight="116dp"
+                android:padding="16dp"
+                android:textColor="@color/tea_mist"
+                android:textSize="14sp"
+                android:lineSpacingExtra="4dp" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

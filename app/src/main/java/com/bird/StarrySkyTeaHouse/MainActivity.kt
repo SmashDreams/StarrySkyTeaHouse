@@ -1,5 +1,6 @@
 package com.bird.StarrySkyTeaHouse
 
+import android.content.ActivityNotFoundException
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
@@ -14,15 +15,19 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bird.StarrySkyTeaHouse.session.SessionContract
 import com.bird.StarrySkyTeaHouse.session.SessionStore
+import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
     private lateinit var sessionStore: SessionStore
+    private lateinit var gameEntryManager: GameEntryManager
     private lateinit var usernameInput: EditText
     private lateinit var passwordInput: EditText
     private lateinit var currentUser: TextView
     private lateinit var recordsView: TextView
+    private lateinit var gameStatus: TextView
+    private lateinit var gameActionButton: Button
     private val recordsExecutor: ExecutorService = Executors.newSingleThreadExecutor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,13 +36,17 @@ class MainActivity : AppCompatActivity() {
         applySystemBarInsets()
 
         sessionStore = SessionStore(this)
+        gameEntryManager = GameEntryManager(this)
         usernameInput = findViewById(R.id.username_input)
         passwordInput = findViewById(R.id.password_input)
         currentUser = findViewById(R.id.current_user)
         recordsView = findViewById(R.id.records_view)
+        gameStatus = findViewById(R.id.game_status)
+        gameActionButton = findViewById(R.id.game_action_button)
         findViewById<Button>(R.id.login_button).setOnClickListener { login() }
         findViewById<Button>(R.id.register_button).setOnClickListener { register() }
         findViewById<Button>(R.id.logout_button).setOnClickListener { logout() }
+        gameActionButton.setOnClickListener { handleGameAction() }
         refreshUi()
     }
 
@@ -53,32 +62,54 @@ class MainActivity : AppCompatActivity() {
 
     private fun register() {
         if (sessionStore.register(getUsernameInput(), getPasswordInput())) {
-            Toast.makeText(this, "注册成功", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.register_success, Toast.LENGTH_SHORT).show()
             notifySessionChanged()
             refreshUi()
         } else {
-            Toast.makeText(this, "注册失败：用户名不能为空，密码至少3位，且用户名不可重复", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.register_failed, Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun login() {
         if (sessionStore.login(getUsernameInput(), getPasswordInput())) {
-            Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.login_success, Toast.LENGTH_SHORT).show()
             notifySessionChanged()
             refreshUi()
         } else {
-            Toast.makeText(this, "登录失败：请检查用户名和密码", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.login_failed, Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun logout() {
         sessionStore.logout()
-        Toast.makeText(this, "已退出登录", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, R.string.logout_success, Toast.LENGTH_SHORT).show()
         notifySessionChanged()
         refreshUi()
     }
 
+    private fun handleGameAction() {
+        if (gameEntryManager.isGameInstalled()) {
+            if (!gameEntryManager.openGame()) {
+                Toast.makeText(this, R.string.game_open_failed, Toast.LENGTH_SHORT).show()
+            }
+            return
+        }
+
+        try {
+            gameEntryManager.installBundledGame()
+            Toast.makeText(this, R.string.game_install_started, Toast.LENGTH_SHORT).show()
+        } catch (exception: IOException) {
+            Toast.makeText(this, R.string.game_install_asset_missing, Toast.LENGTH_SHORT).show()
+        } catch (exception: ActivityNotFoundException) {
+            Toast.makeText(this, R.string.game_install_no_handler, Toast.LENGTH_SHORT).show()
+        } catch (exception: SecurityException) {
+            Toast.makeText(this, R.string.game_install_permission_failed, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun refreshUi() {
+        refreshGameEntryUi()
+
         val username = sessionStore.getCurrentUsername()
         if (username.isNullOrEmpty()) {
             currentUser.setText(R.string.current_user_logged_out)
@@ -86,9 +117,19 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        currentUser.text = "当前登录：$username"
+        currentUser.text = getString(R.string.current_user_logged_in, username)
         recordsView.setText(R.string.records_loading)
         loadGameRecordsAsync(username)
+    }
+
+    private fun refreshGameEntryUi() {
+        if (gameEntryManager.isGameInstalled()) {
+            gameStatus.setText(R.string.game_status_installed)
+            gameActionButton.setText(R.string.game_open)
+        } else {
+            gameStatus.setText(R.string.game_status_not_installed)
+            gameActionButton.setText(R.string.game_install)
+        }
     }
 
     private fun loadGameRecordsAsync(username: String) {
@@ -130,15 +171,8 @@ class MainActivity : AppCompatActivity() {
             val elapsed = getInt(cursor, COLUMN_ELAPSED_SECONDS)
             val remaining = getInt(cursor, COLUMN_REMAINING_SECONDS)
             val completed = getInt(cursor, COLUMN_COMPLETED) == 1
-            builder.append("第")
-                .append(level)
-                .append("关  ")
-                .append(if (completed) "已通关" else "未通关")
-                .append("  用时")
-                .append(elapsed)
-                .append("秒  剩余")
-                .append(remaining)
-                .append("秒\n")
+            builder.append(getString(R.string.record_row, level, if (completed) getString(R.string.record_completed) else getString(R.string.record_uncompleted), elapsed, remaining))
+                .append('\n')
         }
         return if (builder.isEmpty()) getString(R.string.records_empty) else builder.toString()
     }
