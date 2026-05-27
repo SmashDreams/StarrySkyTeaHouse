@@ -7,6 +7,13 @@
     <string name="login">登录</string>
     <string name="register">注册</string>
     <string name="logout">退出登录</string>
+    <string name="remember_password">保存密码</string>
+    <string name="already_logged_in">用户已登录</string>
+    <string name="register_title">注册茶苑通行证</string>
+    <string name="confirm_password_hint">确认密码</string>
+    <string name="register_action">注册并登录</string>
+    <string name="back_to_login">返回登录</string>
+    <string name="password_mismatch">两次输入的密码不一致</string>
     <string name="current_user_logged_out">当前未登录</string>
     <string name="current_user_logged_in">当前登录：%1$s</string>
     <string name="register_success">注册成功</string>
@@ -27,9 +34,15 @@
     <string name="records_title">星空数独通关记录</string>
     <string name="records_login_first">登录后查看通关记录</string>
     <string name="records_loading">正在读取星空数独通关记录…</string>
-    <string name="records_empty">暂无通关记录</string>
-    <string name="records_missing_game">未检测到星空数独战绩数据</string>
+    <string name="records_summary_completed">已通关</string>
+    <string name="records_summary_highest">最高关卡</string>
+    <string name="records_summary_latest">最近记录</string>
+    <string name="records_level_badge">第%1$d关</string>
+    <string name="records_elapsed_label">用时</string>
+    <string name="records_remaining_label">剩余</string>
+    <string name="records_seconds">%1$d秒</string>
+    <string name="records_empty">暂无记录，先进入星空数独完成一关吧</string>
+    <string name="records_missing_game">暂未读取到星空数独数据</string>
     <string name="record_completed">已通关</string>
     <string name="record_uncompleted">未通关</string>
-    <string name="record_row">第%1$d关  %2$s  用时%3$d秒  剩余%4$d秒</string>
 </resources>

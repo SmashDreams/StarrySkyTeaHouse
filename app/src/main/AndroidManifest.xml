@@ -39,6 +39,10 @@
         </provider>
 
         <activity
+            android:name="com.bird.StarrySkyTeaHouse.RegisterActivity"
+            android:exported="false" />
+
+        <activity
             android:name="com.bird.StarrySkyTeaHouse.MainActivity"
             android:exported="true">
             <intent-filter>
