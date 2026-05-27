@@ -1,0 +1,9 @@
+<resources>
+    <color name="tea_midnight">#11192F</color>
+    <color name="tea_panel">#1E2A44</color>
+    <color name="tea_gold">#F4C86A</color>
+    <color name="tea_mist">#E8E2D4</color>
+    <color name="tea_leaf">#6FBF9A</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+</resources>

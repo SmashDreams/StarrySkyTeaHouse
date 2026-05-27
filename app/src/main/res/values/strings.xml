@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">星空茶苑</string>
+    <string name="launcher_title">星空茶苑</string>
+    <string name="launcher_subtitle">登录后查看你在星空数独中的通关记录</string>
+    <string name="username_hint">用户名</string>
+    <string name="password_hint">密码</string>
+    <string name="login">登录</string>
+    <string name="register">注册</string>
+    <string name="logout">退出登录</string>
+    <string name="current_user_logged_out">当前未登录</string>
+    <string name="records_title">星空数独通关记录</string>
+    <string name="records_login_first">请先登录后查看通关记录</string>
+    <string name="records_loading">正在读取星空数独通关记录…</string>
+    <string name="records_empty">暂无通关记录</string>
+    <string name="records_missing_game">未检测到星空数独战绩数据</string>
+</resources>
