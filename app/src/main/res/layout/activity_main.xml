@@ -51,10 +51,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.04"
-                    android:text="StarrySkyTeaHouse"
+                    android:text="Starry Sky Tea House"
                     android:textAllCaps="false"
                     android:textColor="@color/tea_gold"
-                    android:textSize="10sp"
+                    android:textSize="11sp"
                     android:textStyle="bold" />
 
                 <TextView

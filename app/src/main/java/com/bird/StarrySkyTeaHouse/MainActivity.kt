@@ -2,9 +2,7 @@ package com.bird.StarrySkyTeaHouse
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.database.Cursor
 import android.graphics.Typeface
-import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -20,42 +18,49 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import com.bird.StarrySkyTeaHouse.records.GameRecord
+import com.bird.StarrySkyTeaHouse.records.GameRecordLoadResult
+import com.bird.StarrySkyTeaHouse.records.GameRecordRepository
+import com.bird.StarrySkyTeaHouse.records.GameRecordSummary
 import com.bird.StarrySkyTeaHouse.session.SessionContract
 import com.bird.StarrySkyTeaHouse.session.SessionStore
 import java.io.IOException
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var sessionStore: SessionStore
-    private lateinit var gameEntryManager: GameEntryManager
-    private lateinit var usernameInput: EditText
-    private lateinit var passwordInput: EditText
-    private lateinit var currentUser: TextView
-    private lateinit var recordsContainer: LinearLayout
-    private lateinit var gameStatus: TextView
-    private lateinit var rememberPasswordCheckBox: CheckBox
-    private lateinit var gameActionButton: Button
-    private val recordsExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+    private lateinit var mSessionStore: SessionStore
+    private lateinit var mGameEntryManager: GameEntryManager
+    private lateinit var mGameRecordRepository: GameRecordRepository
+    private lateinit var mUsernameInput: EditText
+    private lateinit var mPasswordInput: EditText
+    private lateinit var mCurrentUser: TextView
+    private lateinit var mRecordsContainer: LinearLayout
+    private lateinit var mGameStatus: TextView
+    private lateinit var mRememberPasswordCheckBox: CheckBox
+    private lateinit var mGameActionButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         applySystemBarInsets()
 
-        sessionStore = SessionStore(this)
-        gameEntryManager = GameEntryManager(this)
-        usernameInput = findViewById(R.id.username_input)
-        passwordInput = findViewById(R.id.password_input)
-        currentUser = findViewById(R.id.current_user)
-        recordsContainer = findViewById(R.id.records_container)
-        gameStatus = findViewById(R.id.game_status)
-        rememberPasswordCheckBox = findViewById(R.id.remember_password_checkbox)
-        gameActionButton = findViewById(R.id.game_action_button)
+        mSessionStore = SessionStore(this)
+        mGameEntryManager = GameEntryManager(this)
+        mGameRecordRepository = GameRecordRepository(contentResolver)
+        mUsernameInput = findViewById(R.id.username_input)
+        mPasswordInput = findViewById(R.id.password_input)
+        mCurrentUser = findViewById(R.id.current_user)
+        mRecordsContainer = findViewById(R.id.records_container)
+        mGameStatus = findViewById(R.id.game_status)
+        mRememberPasswordCheckBox = findViewById(R.id.remember_password_checkbox)
+        mGameActionButton = findViewById(R.id.game_action_button)
         findViewById<Button>(R.id.login_button).setOnClickListener { login() }
         findViewById<Button>(R.id.register_button).setOnClickListener { openRegisterPage() }
         findViewById<Button>(R.id.logout_button).setOnClickListener { logout() }
-        gameActionButton.setOnClickListener { handleGameAction() }
+        mGameActionButton.setOnClickListener { handleGameAction() }
         restoreLoginInputs()
         refreshUi()
     }
@@ -66,18 +71,13 @@ class MainActivity : AppCompatActivity() {
         refreshUi()
     }
 
-    override fun onDestroy() {
-        recordsExecutor.shutdownNow()
-        super.onDestroy()
-    }
-
     private fun login() {
-        if (sessionStore.isLoggedIn()) {
+        if (mSessionStore.isLoggedIn()) {
             Toast.makeText(this, R.string.already_logged_in, Toast.LENGTH_SHORT).show()
             return
         }
 
-        if (sessionStore.login(getUsernameInput(), getPasswordInput(), rememberPasswordCheckBox.isChecked)) {
+        if (mSessionStore.login(getUsernameInput(), getPasswordInput(), mRememberPasswordCheckBox.isChecked)) {
             Toast.makeText(this, R.string.login_success, Toast.LENGTH_SHORT).show()
             notifySessionChanged()
             refreshUi()
@@ -91,22 +91,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        sessionStore.logout()
+        mSessionStore.logout()
         Toast.makeText(this, R.string.logout_success, Toast.LENGTH_SHORT).show()
         notifySessionChanged()
         refreshUi()
     }
 
     private fun handleGameAction() {
-        if (gameEntryManager.isGameInstalled()) {
-            if (!gameEntryManager.openGame()) {
+        if (mGameEntryManager.isGameInstalled()) {
+            if (!mGameEntryManager.openGame()) {
                 Toast.makeText(this, R.string.game_open_failed, Toast.LENGTH_SHORT).show()
             }
             return
         }
 
         try {
-            gameEntryManager.installBundledGame()
+            mGameEntryManager.installBundledGame()
             Toast.makeText(this, R.string.game_install_started, Toast.LENGTH_SHORT).show()
         } catch (exception: IOException) {
             Toast.makeText(this, R.string.game_install_asset_missing, Toast.LENGTH_SHORT).show()
@@ -118,90 +118,61 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun restoreLoginInputs() {
-        val lastUsername = sessionStore.getLastLoginUsername()
+        val lastUsername = mSessionStore.getLastLoginUsername()
         if (!lastUsername.isNullOrEmpty()) {
-            usernameInput.setText(lastUsername)
-            usernameInput.setSelection(usernameInput.text.length)
+            mUsernameInput.setText(lastUsername)
+            mUsernameInput.setSelection(mUsernameInput.text.length)
         }
-        rememberPasswordCheckBox.isChecked = sessionStore.isRememberPasswordEnabled()
-        if (rememberPasswordCheckBox.isChecked) {
-            passwordInput.setText(sessionStore.getRememberedPassword().orEmpty())
+        mRememberPasswordCheckBox.isChecked = mSessionStore.isRememberPasswordEnabled()
+        if (mRememberPasswordCheckBox.isChecked) {
+            mPasswordInput.setText(mSessionStore.getRememberedPassword().orEmpty())
         } else {
-            passwordInput.text.clear()
+            mPasswordInput.text.clear()
         }
     }
 
     private fun refreshUi() {
         refreshGameEntryUi()
 
-        val username = sessionStore.getCurrentUsername()
+        val username = mSessionStore.getCurrentUsername()
         if (username.isNullOrEmpty()) {
-            currentUser.setText(R.string.current_user_logged_out)
+            mCurrentUser.setText(R.string.current_user_logged_out)
             showRecordsMessage(R.string.records_login_first)
             return
         }
 
-        currentUser.text = getString(R.string.current_user_logged_in, username)
+        mCurrentUser.text = getString(R.string.current_user_logged_in, username)
         showRecordsMessage(R.string.records_loading)
         loadGameRecordsAsync(username)
     }
 
     private fun refreshGameEntryUi() {
-        if (gameEntryManager.isGameInstalled()) {
-            gameStatus.setText(R.string.game_status_installed)
-            gameActionButton.setText(R.string.game_open)
+        if (mGameEntryManager.isGameInstalled()) {
+            mGameStatus.setText(R.string.game_status_installed)
+            mGameActionButton.setText(R.string.game_open)
         } else {
-            gameStatus.setText(R.string.game_status_not_installed)
-            gameActionButton.setText(R.string.game_install)
+            mGameStatus.setText(R.string.game_status_not_installed)
+            mGameActionButton.setText(R.string.game_install)
         }
     }
 
     private fun loadGameRecordsAsync(username: String) {
-        recordsExecutor.execute {
-            val recordsState = loadGameRecords(username)
-            runOnUiThread {
-                if (username == sessionStore.getCurrentUsername()) {
-                    renderRecords(recordsState)
-                }
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                mGameRecordRepository.loadForUsername(username)
+            }
+            if (username == mSessionStore.getCurrentUsername()) {
+                renderRecords(result.toRecordsState())
             }
         }
     }
 
-    private fun loadGameRecords(username: String): RecordsState {
-        val projection = arrayOf(
-            COLUMN_USERNAME,
-            COLUMN_LEVEL,
-            COLUMN_ELAPSED_SECONDS,
-            COLUMN_REMAINING_SECONDS,
-            COLUMN_COMPLETED
-        )
-        return try {
-            contentResolver.query(
-                GAME_RESULTS_URI,
-                projection,
-                "$COLUMN_USERNAME=?",
-                arrayOf(username),
-                null
-            )?.use { cursor ->
-                val records = parseRecords(cursor)
-                if (records.isEmpty()) RecordsState.Message(R.string.records_empty) else RecordsState.Records(records)
-            } ?: RecordsState.Message(R.string.records_missing_game)
-        } catch (exception: RuntimeException) {
-            RecordsState.Message(R.string.records_missing_game)
+    private fun GameRecordLoadResult.toRecordsState(): RecordsState {
+        return when (this) {
+            GameRecordLoadResult.Empty -> RecordsState.Message(R.string.records_empty)
+            GameRecordLoadResult.Unavailable -> RecordsState.Message(R.string.records_missing_game)
+            is GameRecordLoadResult.Records -> RecordsState.Records(records)
         }
-    }
-
-    private fun parseRecords(cursor: Cursor): List<GameRecord> {
-        val records = mutableListOf<GameRecord>()
-        while (cursor.moveToNext()) {
-            records += GameRecord(
-                level = getInt(cursor, COLUMN_LEVEL),
-                elapsedSeconds = getInt(cursor, COLUMN_ELAPSED_SECONDS),
-                remainingSeconds = getInt(cursor, COLUMN_REMAINING_SECONDS),
-                completed = getInt(cursor, COLUMN_COMPLETED) == 1
-            )
-        }
-        return records
     }
 
     private fun renderRecords(state: RecordsState) {
@@ -212,8 +183,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showRecordsMessage(@StringRes messageRes: Int) {
-        recordsContainer.removeAllViews()
-        recordsContainer.addView(
+        mRecordsContainer.removeAllViews()
+        mRecordsContainer.addView(
             createText(getString(messageRes), R.color.tea_mist, 14f).apply {
                 setBackgroundResource(R.drawable.bg_records_panel)
                 gravity = Gravity.CENTER
@@ -228,7 +199,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showRecordCards(records: List<GameRecord>) {
-        recordsContainer.removeAllViews()
+        mRecordsContainer.removeAllViews()
         addSummaryRow(GameRecordSummary.from(records))
         records.forEachIndexed { index, record -> addRecordCard(record, index > 0) }
     }
@@ -238,7 +209,7 @@ class MainActivity : AppCompatActivity() {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
         }
-        recordsContainer.addView(
+        mRecordsContainer.addView(
             summaryRow,
             LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -309,7 +280,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         card.addView(content, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-        recordsContainer.addView(
+        mRecordsContainer.addView(
             card,
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
                 topMargin = if (hasTopMargin) dp(10) else dp(14)
@@ -340,14 +311,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getInt(cursor: Cursor, columnName: String): Int {
-        val index = cursor.getColumnIndex(columnName)
-        return if (index >= 0) cursor.getInt(index) else 0
-    }
+    private fun getUsernameInput(): String = mUsernameInput.text.toString()
 
-    private fun getUsernameInput(): String = usernameInput.text.toString()
-
-    private fun getPasswordInput(): String = passwordInput.text.toString()
+    private fun getPasswordInput(): String = mPasswordInput.text.toString()
 
     private fun notifySessionChanged() {
         contentResolver.notifyChange(SessionContract.Session.CONTENT_URI, null)
@@ -377,14 +343,5 @@ class MainActivity : AppCompatActivity() {
     private sealed class RecordsState {
         data class Message(@param:StringRes val messageRes: Int) : RecordsState()
         data class Records(val records: List<GameRecord>) : RecordsState()
-    }
-
-    private companion object {
-        val GAME_RESULTS_URI: Uri = Uri.parse("content://com.bird.starryskysudoku.provider/results")
-        const val COLUMN_USERNAME = "username"
-        const val COLUMN_LEVEL = "level"
-        const val COLUMN_ELAPSED_SECONDS = "elapsed_seconds"
-        const val COLUMN_REMAINING_SECONDS = "remaining_seconds"
-        const val COLUMN_COMPLETED = "completed"
     }
 }

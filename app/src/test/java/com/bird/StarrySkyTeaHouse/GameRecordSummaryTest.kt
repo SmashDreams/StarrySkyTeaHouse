@@ -1,5 +1,8 @@
 package com.bird.StarrySkyTeaHouse
 
+import com.bird.StarrySkyTeaHouse.records.GameRecord
+import com.bird.StarrySkyTeaHouse.records.GameRecordSummary
+
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
