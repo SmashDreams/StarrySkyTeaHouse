@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.bird.launcher"
+    namespace = "com.bird.StarrySkyTeaHouse"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -11,7 +11,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.bird.launcher"
+        applicationId = "com.bird.StarrySkyTeaHouse"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

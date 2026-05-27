@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.Launcher" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.StarrySkyTeaHouse" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/tea_gold</item>
         <item name="colorPrimaryVariant">@color/tea_midnight</item>
         <item name="colorOnPrimary">@color/tea_midnight</item>

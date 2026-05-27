@@ -5,7 +5,7 @@
 ## 版本
 
 - 当前版本：1.0
-- 包名：`com.bird.launcher`
+- 包名：`com.bird.StarrySkyTeaHouse`
 - 应用名：星空茶苑
 - 最低系统版本：Android 7.0 / API 24
 
@@ -21,9 +21,9 @@
 
 ### 星空茶苑提供登录状态
 
-- Authority：`com.bird.launcher.provider`
-- URI：`content://com.bird.launcher.provider/session`
-- 权限：`com.bird.launcher.permission.READ_SESSION`
+- Authority：`com.bird.StarrySkyTeaHouse.provider`
+- URI：`content://com.bird.StarrySkyTeaHouse.provider/session`
+- 权限：`com.bird.StarrySkyTeaHouse.permission.READ_SESSION`
 - 字段：
   - `username`
   - `logged_in`
@@ -40,7 +40,7 @@
 ## 技术栈
 
 - Android 原生应用
-- Java + XML Layout
+- Kotlin + XML Layout
 - AppCompat / Material Components
 - SharedPreferences 本地账户与登录状态
 - ContentProvider / ContentResolver 跨应用通信
