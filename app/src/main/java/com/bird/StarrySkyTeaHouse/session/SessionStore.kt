@@ -7,7 +7,7 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
 class SessionStore(context: Context) {
-    private val preferences: SharedPreferences = context.applicationContext
+    private val mPreferences: SharedPreferences = context.applicationContext
         .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     fun register(username: String?, password: String?, rememberPassword: Boolean = false): Boolean {
@@ -16,7 +16,7 @@ class SessionStore(context: Context) {
             return false
         }
         val safePassword = password.orEmpty()
-        return preferences.edit()
+        return mPreferences.edit()
             .putString(userKey(normalizedUsername), hashPassword(safePassword))
             .applyLoginPreferences(normalizedUsername, safePassword, rememberPassword)
             .commit()
@@ -25,31 +25,31 @@ class SessionStore(context: Context) {
     fun login(username: String?, password: String?, rememberPassword: Boolean = false): Boolean {
         val normalizedUsername = normalizeUsername(username)
         if (normalizedUsername.isEmpty() || password == null) return false
-        val storedHash = preferences.getString(userKey(normalizedUsername), null) ?: return false
+        val storedHash = mPreferences.getString(userKey(normalizedUsername), null) ?: return false
         if (storedHash != hashPassword(password)) return false
-        return preferences.edit()
+        return mPreferences.edit()
             .applyLoginPreferences(normalizedUsername, password, rememberPassword)
             .commit()
     }
 
     fun logout() {
-        preferences.edit().remove(KEY_CURRENT_USERNAME).commit()
+        mPreferences.edit().remove(KEY_CURRENT_USERNAME).commit()
     }
 
-    fun getCurrentUsername(): String? = preferences.getString(KEY_CURRENT_USERNAME, null)
+    fun getCurrentUsername(): String? = mPreferences.getString(KEY_CURRENT_USERNAME, null)
 
     fun isLoggedIn(): Boolean = !getCurrentUsername().isNullOrEmpty()
 
     fun getLastLoginUsername(): String? {
-        return preferences.getString(LoginPreferenceContract.KEY_LAST_USERNAME, null)
+        return mPreferences.getString(LoginPreferenceContract.KEY_LAST_USERNAME, null)
     }
 
     fun isRememberPasswordEnabled(): Boolean {
-        return preferences.getBoolean(LoginPreferenceContract.KEY_REMEMBER_PASSWORD, false)
+        return mPreferences.getBoolean(LoginPreferenceContract.KEY_REMEMBER_PASSWORD, false)
     }
 
     fun getRememberedPassword(): String? {
-        return preferences.getString(LoginPreferenceContract.KEY_REMEMBERED_PASSWORD, null)
+        return mPreferences.getString(LoginPreferenceContract.KEY_REMEMBERED_PASSWORD, null)
     }
 
     private fun SharedPreferences.Editor.applyLoginPreferences(
@@ -68,7 +68,7 @@ class SessionStore(context: Context) {
         return this
     }
 
-    private fun hasUser(username: String): Boolean = preferences.contains(userKey(username))
+    private fun hasUser(username: String): Boolean = mPreferences.contains(userKey(username))
 
     private fun isValidCredential(username: String, password: String?): Boolean {
         return username.isNotEmpty() && password != null && password.length >= 3

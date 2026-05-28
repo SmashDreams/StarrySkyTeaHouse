@@ -8,11 +8,11 @@ import android.database.MatrixCursor
 import android.net.Uri
 
 class SessionProvider : ContentProvider() {
-    private lateinit var sessionStore: SessionStore
+    private lateinit var mSessionStore: SessionStore
 
     override fun onCreate(): Boolean {
         val appContext = context?.applicationContext ?: return false
-        sessionStore = SessionStore(appContext)
+        mSessionStore = SessionStore(appContext)
         return true
     }
 
@@ -23,7 +23,7 @@ class SessionProvider : ContentProvider() {
         selectionArgs: Array<out String>?,
         sortOrder: String?
     ): Cursor {
-        if (uriMatcher.match(uri) != MATCH_SESSION) {
+        if (sUriMatcher.match(uri) != MATCH_SESSION) {
             throw IllegalArgumentException("Unsupported URI: $uri")
         }
         val columns = resolveProjection(projection)
@@ -35,7 +35,7 @@ class SessionProvider : ContentProvider() {
     }
 
     override fun getType(uri: Uri): String? {
-        return if (uriMatcher.match(uri) == MATCH_SESSION) {
+        return if (sUriMatcher.match(uri) == MATCH_SESSION) {
             SessionContract.Session.CONTENT_TYPE
         } else {
             null
@@ -56,7 +56,7 @@ class SessionProvider : ContentProvider() {
     ): Int = 0
 
     private fun resolveProjection(projection: Array<out String>?): Array<out String> {
-        val columns = projection ?: DEFAULT_COLUMNS
+        val columns = projection ?: sDefaultColumns
         columns.forEach { column ->
             if (column != SessionContract.Session.COLUMN_USERNAME &&
                 column != SessionContract.Session.COLUMN_LOGGED_IN
@@ -69,18 +69,18 @@ class SessionProvider : ContentProvider() {
 
     private fun createSessionValues(): Map<String, Any?> {
         return mapOf(
-            SessionContract.Session.COLUMN_USERNAME to sessionStore.getCurrentUsername(),
-            SessionContract.Session.COLUMN_LOGGED_IN to if (sessionStore.isLoggedIn()) 1 else 0
+            SessionContract.Session.COLUMN_USERNAME to mSessionStore.getCurrentUsername(),
+            SessionContract.Session.COLUMN_LOGGED_IN to if (mSessionStore.isLoggedIn()) 1 else 0
         )
     }
 
     private companion object {
         const val MATCH_SESSION = 1
-        val DEFAULT_COLUMNS = arrayOf(
+        val sDefaultColumns = arrayOf(
             SessionContract.Session.COLUMN_USERNAME,
             SessionContract.Session.COLUMN_LOGGED_IN
         )
-        val uriMatcher: UriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
+        val sUriMatcher: UriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
             addURI(SessionContract.AUTHORITY, SessionContract.Session.PATH, MATCH_SESSION)
         }
     }

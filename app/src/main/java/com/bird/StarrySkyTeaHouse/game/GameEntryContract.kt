@@ -1,4 +1,4 @@
-package com.bird.StarrySkyTeaHouse
+package com.bird.StarrySkyTeaHouse.game
 
 object GameEntryContract {
     const val PACKAGE_NAME = "com.bird.starryskysudoku"

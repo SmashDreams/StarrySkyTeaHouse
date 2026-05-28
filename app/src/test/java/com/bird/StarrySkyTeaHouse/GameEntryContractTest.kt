@@ -1,5 +1,7 @@
 package com.bird.StarrySkyTeaHouse
 
+import com.bird.StarrySkyTeaHouse.game.GameEntryContract
+
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
