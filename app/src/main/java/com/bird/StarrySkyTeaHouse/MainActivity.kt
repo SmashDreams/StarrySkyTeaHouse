@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.repeatOnLifecycle
+import com.bird.StarrySkyTeaHouse.media.TeaMusic
 import com.bird.StarrySkyTeaHouse.main.GameEntryUiState
 import com.bird.StarrySkyTeaHouse.main.MainEvent
 import com.bird.StarrySkyTeaHouse.main.MainToast
@@ -22,10 +23,12 @@ import com.bird.StarrySkyTeaHouse.main.MainViewModelFactory
 import com.bird.StarrySkyTeaHouse.main.RecordsRenderer
 import com.bird.StarrySkyTeaHouse.session.SessionContract
 import com.bird.StarrySkyTeaHouse.ui.applySystemBarPadding
+import com.bird.StarrySkyTeaHouse.ui.setTeaClickListener
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mViewModel: MainViewModel
+    private lateinit var mTeaMusic: TeaMusic
     private lateinit var mUsernameInput: EditText
     private lateinit var mPasswordInput: EditText
     private lateinit var mCurrentUser: TextView
@@ -37,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        mTeaMusic = TeaMusic.getInstance(this)
         mViewModel = ViewModelProvider(this, MainViewModelFactory(this))[MainViewModel::class.java]
         applySystemBarInsets()
         bindViews()
@@ -46,7 +50,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        mTeaMusic.playBackground()
         mViewModel.refresh()
+    }
+
+    override fun onPause() {
+        mTeaMusic.stopBackground()
+        super.onPause()
     }
 
     private fun bindViews() {
@@ -60,16 +70,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bindActions() {
-        findViewById<Button>(R.id.login_button).setOnClickListener {
+        findViewById<Button>(R.id.login_button).setTeaClickListener {
             mViewModel.login(
                 mUsernameInput.text.toString(),
                 mPasswordInput.text.toString(),
                 mRememberPasswordCheckBox.isChecked
             )
         }
-        findViewById<Button>(R.id.register_button).setOnClickListener { mViewModel.openRegisterPage() }
-        findViewById<Button>(R.id.logout_button).setOnClickListener { mViewModel.logout() }
-        mGameActionButton.setOnClickListener { mViewModel.handleGameAction() }
+        findViewById<Button>(R.id.register_button).setTeaClickListener {
+            mViewModel.openRegisterPage()
+        }
+        findViewById<Button>(R.id.logout_button).setTeaClickListener {
+            mViewModel.logout()
+        }
+        mGameActionButton.setTeaClickListener {
+            mViewModel.handleGameAction()
+        }
     }
 
     private fun observeViewModel() {
@@ -89,14 +105,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun renderLoginInputs(state: MainUiState) {
-        val lastUsername = state.lastLoginUsername
-        if (!lastUsername.isNullOrEmpty() && !mUsernameInput.hasFocus() && mUsernameInput.text.isEmpty()) {
-            mUsernameInput.setText(lastUsername)
-            mUsernameInput.setSelection(mUsernameInput.text.length)
-        }
+        syncInputText(mUsernameInput, state.lastLoginUsername.orEmpty())
         mRememberPasswordCheckBox.isChecked = state.rememberPassword
-        if (state.rememberPassword && !mPasswordInput.hasFocus() && mPasswordInput.text.isEmpty()) {
-            mPasswordInput.setText(state.rememberedPassword.orEmpty())
+        val password = if (state.rememberPassword) state.rememberedPassword.orEmpty() else ""
+        syncInputText(mPasswordInput, password)
+    }
+
+    private fun syncInputText(input: EditText, value: String) {
+        if (!input.hasFocus() && input.text.toString() != value) {
+            input.setText(value)
+            input.setSelection(input.text.length)
         }
     }
 

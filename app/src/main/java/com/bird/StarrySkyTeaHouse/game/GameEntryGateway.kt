@@ -11,7 +11,15 @@ interface GameEntryGateway {
 
 class AndroidGameEntryGateway(private val mGameEntryManager: GameEntryManager) : GameEntryGateway {
     override fun isGameInstalled(): Boolean = mGameEntryManager.isGameInstalled()
-    override fun openGame(): Boolean = mGameEntryManager.openGame()
+    override fun openGame(): Boolean {
+        return try {
+            mGameEntryManager.openGame()
+        } catch (exception: ActivityNotFoundException) {
+            false
+        } catch (exception: SecurityException) {
+            false
+        }
+    }
     override fun installBundledGame(): GameInstallResult {
         return try {
             mGameEntryManager.installBundledGame()

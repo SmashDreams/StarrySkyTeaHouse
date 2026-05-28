@@ -117,6 +117,23 @@ class MainViewModelTest {
         assertEquals(GameEntryUiState.NotInstalled, viewModel.uiState.value.gameEntryState)
     }
 
+    @Test
+    fun refreshIgnoresRecordResultWhenUserChangesDuringLoad() = runTest(mDispatcher) {
+        mSession.storedUsername = "alice"
+        mRecords.result = GameRecordLoadResult.Records(
+            listOf(GameRecord(level = 1, elapsedSeconds = 10, remainingSeconds = 590, completed = true))
+        )
+        mRecords.onLoad = { mSession.storedUsername = null }
+        val viewModel = createViewModel()
+
+        viewModel.refresh()
+        advanceUntilIdle()
+
+        assertFalse(viewModel.uiState.value.isLoggedIn)
+        assertEquals(RecordsUiState.LoginRequired, viewModel.uiState.value.recordsState)
+        assertEquals(null, viewModel.uiState.value.recordSummary)
+    }
+
 
 
     @Test
@@ -206,5 +223,9 @@ private class FakeGameEntryGateway : GameEntryGateway {
 
 private class FakeGameRecordGateway : GameRecordGateway {
     var result: GameRecordLoadResult = GameRecordLoadResult.Empty
-    override fun loadForUsername(username: String): GameRecordLoadResult = result
+    var onLoad: () -> Unit = {}
+    override fun loadForUsername(username: String): GameRecordLoadResult {
+        onLoad()
+        return result
+    }
 }

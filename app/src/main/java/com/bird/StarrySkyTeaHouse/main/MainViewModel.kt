@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.atomic.AtomicInteger
 
 class MainViewModel(
     private val mSessionGateway: SessionGateway,
@@ -31,6 +32,7 @@ class MainViewModel(
 
     private val mEvents = MutableSharedFlow<MainEvent>(extraBufferCapacity = 1)
     val events: SharedFlow<MainEvent> = mEvents.asSharedFlow()
+    private val mRecordsRequestId = AtomicInteger(0)
 
     fun refresh() {
         viewModelScope.launch {
@@ -108,6 +110,7 @@ class MainViewModel(
     }
 
     private suspend fun refreshRecordsState() {
+        val requestId = mRecordsRequestId.incrementAndGet()
         val username = mSessionGateway.getCurrentUsername()
         if (username.isNullOrEmpty()) {
             mUiState.update { it.copy(recordsState = RecordsUiState.LoginRequired, recordSummary = null) }
@@ -115,6 +118,13 @@ class MainViewModel(
         }
         mUiState.update { it.copy(recordsState = RecordsUiState.Loading, recordSummary = null) }
         val result = withContext(mIoDispatcher) { mGameRecordGateway.loadForUsername(username) }
+        if (requestId != mRecordsRequestId.get() || username != mSessionGateway.getCurrentUsername()) {
+            refreshLoginInputsAndGameState()
+            if (mSessionGateway.getCurrentUsername().isNullOrEmpty()) {
+                mUiState.update { it.copy(recordsState = RecordsUiState.LoginRequired, recordSummary = null) }
+            }
+            return
+        }
         mUiState.update { state ->
             when (result) {
                 GameRecordLoadResult.Empty -> state.copy(recordsState = RecordsUiState.Empty, recordSummary = null)

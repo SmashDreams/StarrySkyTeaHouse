@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">星空茶苑</string>
+    <string name="brand_subtitle">Starry Sky Tea House</string>
     <string name="launcher_title">星空茶苑</string>
     <string name="session_card_title">茶苑通行证</string>
     <string name="username_hint">用户名</string>
