@@ -12,7 +12,7 @@ class SessionProvider : ContentProvider() {
 
     override fun onCreate(): Boolean {
         val appContext = context?.applicationContext ?: return false
-        mSessionStore = SessionStore(appContext)
+        mSessionStore = SessionStore.getInstance(appContext)
         return true
     }
 

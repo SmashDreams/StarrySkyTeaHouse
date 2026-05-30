@@ -55,8 +55,10 @@ class GameEntryManager(private val mContext: Context) {
             throw IOException("Cannot create installer cache directory")
         }
         val target = File(installDir, GameEntryContract.ASSET_FILE_NAME)
-        mContext.assets.open(GameEntryContract.ASSET_FILE_NAME).use { input ->
-            target.outputStream().use { output -> input.copyTo(output) }
+        if (!target.exists()) {
+            mContext.assets.open(GameEntryContract.ASSET_FILE_NAME).use { input ->
+                target.outputStream().use { output -> input.copyTo(output) }
+            }
         }
         return FileProvider.getUriForFile(
             mContext,

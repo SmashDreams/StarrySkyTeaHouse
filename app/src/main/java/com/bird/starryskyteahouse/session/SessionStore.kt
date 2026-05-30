@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
-class SessionStore(context: Context) {
+class SessionStore private constructor(context: Context) {
     private val mPreferences: SharedPreferences = context.applicationContext
         .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
@@ -88,9 +88,18 @@ class SessionStore(context: Context) {
         }
     }
 
-    private companion object {
-        const val PREFS_NAME = "StarrySkyTeaHouse_session"
-        const val KEY_CURRENT_USERNAME = "current_username"
-        const val USER_PREFIX = "user."
+    companion object {
+        @Volatile
+        private var sInstance: SessionStore? = null
+
+        fun getInstance(context: Context): SessionStore {
+            return sInstance ?: synchronized(this) {
+                sInstance ?: SessionStore(context.applicationContext).also { sInstance = it }
+            }
+        }
+
+        private const val PREFS_NAME = "StarrySkyTeaHouse_session"
+        private const val KEY_CURRENT_USERNAME = "current_username"
+        private const val USER_PREFIX = "user."
     }
 }

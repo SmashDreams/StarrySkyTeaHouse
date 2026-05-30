@@ -14,7 +14,7 @@ import com.bird.starryskyteahouse.session.SessionStoreGateway
 
 class TeaHouseAppContainer(context: Context) {
     private val mAppContext = context.applicationContext
-    private val mSessionStoreGateway = SessionStoreGateway(SessionStore(mAppContext))
+    private val mSessionStoreGateway = SessionStoreGateway(SessionStore.getInstance(mAppContext))
 
     val mSessionGateway: SessionGateway = mSessionStoreGateway
     val mRegisterSessionGateway: RegisterSessionGateway = mSessionStoreGateway
