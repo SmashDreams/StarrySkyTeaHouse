@@ -5,9 +5,10 @@
 ## 版本
 
 - 当前版本：1.1
-- 包名：`com.bird.StarrySkyTeaHouse`
+- 包名：`com.bird.starryskyteahouse`
 - 应用名：星空茶苑
 - 最低系统版本：Android 7.0 / API 24
+- 本次维护：完成小写包名规范化、页面结构拆分、战绩列表 RecyclerView 化，并重新集成最新星空数独 APK。
 
 ## 功能
 
@@ -21,13 +22,33 @@
 - 未登录时提示先登录，不展示战绩
 - 对跨应用 Provider 访问使用签名权限和 Android 11+ 包可见性声明
 
+## 项目结构
+
+- `MainActivity.kt`：主页面入口，负责生命周期、事件收集和页面级导航
+- `RegisterActivity.kt`：注册页面入口，负责生命周期、注册事件收集和页面结束
+- `TeaHouseAppContainer.kt`：集中创建 Session、游戏入口和战绩读取依赖
+- `main/MainScreenRenderer.kt`：主页面输入读取、登录态渲染、游戏入口渲染和战绩列表渲染
+- `main/RegisterScreenController.kt`：注册页表单读取和按钮绑定
+- `main/RecordsAdapter.kt`：使用 `RecyclerView + ListAdapter` 渲染战绩空状态、汇总和记录卡片
+- `main/MainViewModel.kt`、`main/RegisterViewModel.kt`：页面状态与事件管理
+- `game/GameEntryManager.kt`：检测、启动和安装星空数独
+- `records/GameRecordRepository.kt`：读取星空数独战绩 Provider
+- `session/SessionProvider.kt`、`session/SessionStore.kt`：本地登录态存储与跨应用暴露
+
+## 内置星空数独 APK
+
+- 文件路径：`app/src/main/assets/starry_sky_sudoku.apk`
+- 来源：星空数独 Debug 构建产物 `app/build/outputs/apk/debug/app-debug.apk`
+- 安装入口：`GameEntryManager` 从 assets 复制到缓存目录后，通过 `FileProvider` 调起系统安装器
+- FileProvider Authority：`com.bird.starryskyteahouse.fileprovider`
+
 ## 与星空数独的通信
 
 ### 星空茶苑提供登录状态
 
-- Authority：`com.bird.StarrySkyTeaHouse.provider`
-- URI：`content://com.bird.StarrySkyTeaHouse.provider/session`
-- 权限：`com.bird.StarrySkyTeaHouse.permission.READ_SESSION`
+- Authority：`com.bird.starryskyteahouse.provider`
+- URI：`content://com.bird.starryskyteahouse.provider/session`
+- 权限：`com.bird.starryskyteahouse.permission.READ_SESSION`
 - 字段：
   - `username`
   - `logged_in`
@@ -61,7 +82,7 @@
 运行本地单元测试：
 
 ```bash
-./gradlew testDebugUnitTest
+./gradlew test
 ```
 
 ## 使用说明
@@ -76,6 +97,7 @@
 
 ## 版本记录
 
+- 1.1 维护更新：包名规范化为 `com.bird.starryskyteahouse`；接入 ViewBinding；拆分依赖容器、主页面渲染器和注册页控制器；战绩记录改为 `RecyclerView + ListAdapter` 并修复初始提示卡片宽度；删除旧 `RecordsRenderer`；重新集成最新星空数独 APK。
 - 1.1：新增茶苑背景音乐和按钮点击音效；优化音频焦点、点击音效封装、战绩刷新竞态、游戏启动异常处理和登录输入同步。
 - 1.1：更新内置星空数独 APK 到 1.5；同步说明游戏前台倒计时通知与进入棋盘前通知权限处理。
 - 1.0：完成本地注册/登录、星空数独安装/启动、登录状态 Provider 与战绩查询展示。

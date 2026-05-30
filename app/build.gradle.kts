@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.bird.StarrySkyTeaHouse"
+    namespace = "com.bird.starryskyteahouse"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -11,7 +11,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.bird.StarrySkyTeaHouse"
+        applicationId = "com.bird.starryskyteahouse"
         minSdk = 24
         targetSdk = 36
         versionCode = 2
@@ -28,6 +28,9 @@ android {
                 "proguard-rules.pro"
             )
         }
+    }
+    buildFeatures {
+        viewBinding = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

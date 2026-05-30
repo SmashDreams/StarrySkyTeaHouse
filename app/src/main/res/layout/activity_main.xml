@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_teahouse_root">
 
-    <com.bird.StarrySkyTeaHouse.ShootingStarView
+    <com.bird.starryskyteahouse.ShootingStarView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:importantForAccessibility="no" />
@@ -262,12 +262,13 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/records_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:orientation="vertical" />
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never" />
         </LinearLayout>
     </LinearLayout>
     </ScrollView>
