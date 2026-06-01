@@ -89,6 +89,7 @@ projects/
 - ContentProvider / ContentResolver 跨应用通信
 - MediaPlayer / SoundPool 茶苑背景音乐与点击音效
 - Gradle Version Catalog
+- 共享源码契约（引用 `../StarrySkySudoku/shared-contracts/`）
 
 ## 构建
 
@@ -107,6 +108,7 @@ projects/
 同步并重新内置最新星空数独 APK：
 
 ```bash
+# 在 StarrySkyTeaHouse 目录下执行
 ./gradlew syncBundledSudokuApk
 ```
 
