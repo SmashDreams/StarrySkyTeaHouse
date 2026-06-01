@@ -34,14 +34,15 @@ class MainScreenRenderer(
     }
 
     private fun renderLoginInputs(state: MainUiState) {
-        syncInputText(mBinding.usernameInput, state.lastLoginUsername.orEmpty())
+        val forceSync = state.isLoggedIn
+        syncInputText(mBinding.usernameInput, state.lastLoginUsername.orEmpty(), forceSync)
         mBinding.rememberPasswordCheckbox.isChecked = state.rememberPassword
         val password = if (state.rememberPassword) state.rememberedPassword.orEmpty() else ""
-        syncInputText(mBinding.passwordInput, password)
+        syncInputText(mBinding.passwordInput, password, forceSync)
     }
 
-    private fun syncInputText(input: EditText, value: String) {
-        if (!input.hasFocus() && input.text.toString() != value) {
+    private fun syncInputText(input: EditText, value: String, forceSync: Boolean = false) {
+        if ((forceSync || !input.hasFocus()) && input.text.toString() != value) {
             input.setText(value)
             input.setSelection(input.text.length)
         }

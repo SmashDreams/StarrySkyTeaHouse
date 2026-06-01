@@ -34,6 +34,9 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
     sourceSets {
         getByName("main") {
             java.directories.add(sharedContractsSourceDir)
