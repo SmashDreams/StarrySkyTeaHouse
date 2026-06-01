@@ -36,6 +36,18 @@
 - `session/SessionProvider.kt`、`session/SessionStore.kt`：本地登录态存储与跨应用暴露
 - `../StarrySkySudoku/shared-contracts/`：与星空数独共用的 Provider/包名契约源码
 
+## 本地目录要求
+
+星空茶苑 2.0 会直接引用星空数独仓库中的共享契约源码，因此建议两个仓库保持同级目录：
+
+```text
+projects/
+  StarrySkySudoku/
+  StarrySkyTeaHouse/
+```
+
+如果只单独克隆 `StarrySkyTeaHouse`，Gradle 会找不到 `../StarrySkySudoku/shared-contracts/`，需要先把 `StarrySkySudoku` 克隆到同级目录。
+
 ## 内置星空数独 APK
 
 - 文件路径：`app/src/main/assets/starry_sky_sudoku.apk`
@@ -80,6 +92,8 @@
 
 ## 构建
 
+首次构建前，请确认同级目录下已经存在 `StarrySkySudoku` 仓库。
+
 ```bash
 ./gradlew assembleDebug
 ```
@@ -109,7 +123,7 @@
 ## 版本记录
 
 - 2.0：接入 `shared-contracts` 共享契约；新增 `syncBundledSudokuApk` 同步任务；内置星空数独 APK 更新到 2.0；同步说明数独地图页结构拆分和跨应用契约整理。
-- 1.1 维护更新：包名规范化为 `com.bird.starryskyteahouse`；接入 ViewBinding；拆分依赖容器、主页面渲染器和注册页控制器；战绩记录改为 `RecyclerView + ListAdapter` 并修复初始提示卡片宽度；删除旧 `RecordsRenderer`；重新集成最新星空数独 APK。
+- 1.1 维护更新：包名规范化为 `com.bird.starryskyteahouse`；接入 ViewBinding；拆分依赖容器、主页面渲染器和注册页控制器；战绩记录改为 `RecyclerView + ListAdapter` 并修复初始提示卡片宽度；删除旧 `RecordsRenderer`；重新集成当时最新的星空数独 APK。
 - 1.1：新增茶苑背景音乐和按钮点击音效；优化音频焦点、点击音效封装、战绩刷新竞态、游戏启动异常处理和登录输入同步。
 - 1.1：更新内置星空数独 APK 到 1.5；同步说明游戏前台倒计时通知与进入棋盘前通知权限处理。
 - 1.0：完成本地注册/登录、星空数独安装/启动、登录状态 Provider 与战绩查询展示。
