@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+val sharedContractsSourceDir = "../../StarrySkySudoku/shared-contracts/src/main/java"
+
 android {
     namespace = "com.bird.starryskyteahouse"
     compileSdk {
@@ -14,8 +16,8 @@ android {
         applicationId = "com.bird.starryskyteahouse"
         minSdk = 24
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -31,6 +33,12 @@ android {
     }
     buildFeatures {
         viewBinding = true
+    }
+    sourceSets {
+        getByName("main") {
+            java.directories.add(sharedContractsSourceDir)
+            kotlin.directories.add(sharedContractsSourceDir)
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

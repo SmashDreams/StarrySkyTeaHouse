@@ -23,10 +23,10 @@ class GameResultsContractTest {
     }
 
     @Test
-    fun resultsAuthorityIsDerivedFromGamePackageContract() {
+    fun resultsAuthorityIsDerivedFromSharedContract() {
         val source = File("src/main/java/com/bird/starryskyteahouse/records/GameResultsContract.kt").readText()
 
         assertEquals("${com.bird.starryskyteahouse.game.GameEntryContract.PACKAGE_NAME}.provider", GameResultsContract.AUTHORITY)
-        assert(source.contains("GameEntryContract.PACKAGE_NAME"))
+        assert(source.contains("SharedGameResultsContract"))
     }
 }

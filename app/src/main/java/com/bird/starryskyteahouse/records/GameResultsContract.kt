@@ -1,34 +1,27 @@
 package com.bird.starryskyteahouse.records
 
 import android.net.Uri
-import com.bird.starryskyteahouse.game.GameEntryContract
+import com.bird.starrysky.contracts.SharedGameResultsContract
 
 object GameResultsContract {
-    const val AUTHORITY = "${GameEntryContract.PACKAGE_NAME}.provider"
-    const val CONTENT_URI_BASE = "content://$AUTHORITY"
+    const val AUTHORITY = SharedGameResultsContract.AUTHORITY
+    const val CONTENT_URI_BASE = SharedGameResultsContract.CONTENT_URI_BASE
 
     object Results {
-        const val PATH = "results"
-        const val CONTENT_URI_STRING = "$CONTENT_URI_BASE/$PATH"
-        val CONTENT_URI: Uri = Uri.parse(CONTENT_URI_STRING)
+        const val PATH = SharedGameResultsContract.Results.PATH
+        const val CONTENT_URI_STRING = SharedGameResultsContract.Results.CONTENT_URI_STRING
+        val CONTENT_URI: Uri = SharedGameResultsContract.Results.CONTENT_URI
 
-        const val COLUMN_USERNAME = "username"
-        const val COLUMN_LEVEL = "level"
-        const val COLUMN_ELAPSED_SECONDS = "elapsed_seconds"
-        const val COLUMN_REMAINING_SECONDS = "remaining_seconds"
-        const val COLUMN_COMPLETED = "completed"
-        const val COLUMN_CREATED_AT = "created_at"
-        const val SORT_NEWEST_FIRST = "$COLUMN_CREATED_AT DESC"
+        const val COLUMN_USERNAME = SharedGameResultsContract.Results.COLUMN_USERNAME
+        const val COLUMN_LEVEL = SharedGameResultsContract.Results.COLUMN_LEVEL
+        const val COLUMN_ELAPSED_SECONDS = SharedGameResultsContract.Results.COLUMN_ELAPSED_SECONDS
+        const val COLUMN_REMAINING_SECONDS = SharedGameResultsContract.Results.COLUMN_REMAINING_SECONDS
+        const val COLUMN_COMPLETED = SharedGameResultsContract.Results.COLUMN_COMPLETED
+        const val COLUMN_CREATED_AT = SharedGameResultsContract.Results.COLUMN_CREATED_AT
+        const val SORT_NEWEST_FIRST = SharedGameResultsContract.Results.SORT_NEWEST_FIRST
 
-        val PROJECTION = arrayOf(
-            COLUMN_USERNAME,
-            COLUMN_LEVEL,
-            COLUMN_ELAPSED_SECONDS,
-            COLUMN_REMAINING_SECONDS,
-            COLUMN_COMPLETED,
-            COLUMN_CREATED_AT
-        )
+        val PROJECTION = SharedGameResultsContract.Results.PROJECTION
 
-        fun selectionForUsername(): String = "$COLUMN_USERNAME=?"
+        fun selectionForUsername(): String = SharedGameResultsContract.Results.selectionForUsername()
     }
 }

@@ -1,7 +1,9 @@
 package com.bird.starryskyteahouse.game
 
+import com.bird.starrysky.contracts.SharedGameEntryContract
+
 object GameEntryContract {
-    const val PACKAGE_NAME = "com.bird.starryskysudoku"
+    const val PACKAGE_NAME = SharedGameEntryContract.PACKAGE_NAME
     const val ASSET_FILE_NAME = "starry_sky_sudoku.apk"
     const val APK_MIME_TYPE = "application/vnd.android.package-archive"
     const val FILE_PROVIDER_AUTHORITY = "com.bird.starryskyteahouse.fileprovider"
