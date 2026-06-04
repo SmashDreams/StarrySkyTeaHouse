@@ -249,7 +249,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:background="@drawable/bg_card_primary"
+            android:background="@drawable/bg_records_panel_solid"
             android:orientation="vertical"
             android:padding="20dp">
 

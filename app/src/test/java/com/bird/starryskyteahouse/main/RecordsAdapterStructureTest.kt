@@ -35,4 +35,18 @@ class RecordsAdapterStructureTest {
         assertTrue(adapter.contains("RecyclerView.LayoutParams.MATCH_PARENT"))
         assertTrue(adapter.contains("RecyclerView.LayoutParams.WRAP_CONTENT"))
     }
+
+    @Test
+    fun recordsContentUsesWideSummaryPanelAndReadableRecordRows() {
+        val adapter = File("src/main/java/com/bird/starryskyteahouse/main/RecordsAdapter.kt").readText()
+
+        assertTrue(adapter.contains("createSummaryPanel"))
+        assertTrue(adapter.contains("createSummaryDetail"))
+        assertTrue(adapter.contains("createRecordInfoLine"))
+        assertTrue(adapter.contains("bg_records_panel_solid"))
+        assertTrue(adapter.contains("bg_record_status_complete"))
+        assertTrue(adapter.contains("bg_record_status_pending"))
+        assertTrue(adapter.contains("setSingleLine(true)"))
+        assertFalse(adapter.contains("createSummaryMetricLayoutParams"))
+    }
 }

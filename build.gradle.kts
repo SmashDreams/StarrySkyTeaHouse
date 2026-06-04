@@ -4,24 +4,24 @@ plugins {
 }
 
 val sudokuProjectDir = rootProject.projectDir.resolve("../StarrySkySudoku").canonicalFile
-val sudokuDebugApk = sudokuProjectDir.resolve("app/build/outputs/apk/debug/app-debug.apk")
+val sudokuReleaseApk = sudokuProjectDir.resolve("app/build/outputs/apk/release/app-release.apk")
 val bundledSudokuApk = rootProject.projectDir.resolve("app/src/main/assets/starry_sky_sudoku.apk")
 
 /*
  * 茶苑内置的数独 APK 来自相邻的 StarrySkySudoku 仓库，用独立任务显式同步，避免 assets 中的安装包落后于源码。
  */
-tasks.register<Exec>("assembleBundledSudokuDebug") {
+tasks.register<Exec>("assembleBundledSudokuRelease") {
     group = "distribution"
-    description = "Builds the sibling StarrySkySudoku debug APK used by the TeaHouse installer."
+    description = "Builds the sibling StarrySkySudoku release APK used by the TeaHouse installer."
     workingDir = sudokuProjectDir
-    commandLine("./gradlew", "assembleDebug")
+    commandLine("./gradlew", "assembleRelease")
 }
 
 tasks.register<Copy>("syncBundledSudokuApk") {
     group = "distribution"
-    description = "Copies the latest StarrySkySudoku debug APK into TeaHouse assets."
-    dependsOn("assembleBundledSudokuDebug")
-    from(sudokuDebugApk)
+    description = "Copies the latest StarrySkySudoku release APK into TeaHouse assets."
+    dependsOn("assembleBundledSudokuRelease")
+    from(sudokuReleaseApk)
     into(bundledSudokuApk.parentFile)
     rename { bundledSudokuApk.name }
 }

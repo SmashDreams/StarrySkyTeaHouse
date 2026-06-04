@@ -2,7 +2,27 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+import java.util.Properties
+
 val sharedContractsSourceDir = "../../StarrySkySudoku/shared-contracts/src/main/java"
+val releaseSigningProperties = Properties().apply {
+    val releaseSigningPropertiesFile = rootProject.file("local.properties")
+    if (releaseSigningPropertiesFile.exists()) {
+        releaseSigningPropertiesFile.inputStream().use { load(it) }
+    }
+}
+val requiredReleaseSigningProperties = listOf(
+    "RELEASE_STORE_FILE",
+    "RELEASE_STORE_PASSWORD",
+    "RELEASE_KEY_ALIAS",
+    "RELEASE_KEY_PASSWORD"
+)
+val hasReleaseSigningProperties = requiredReleaseSigningProperties.all {
+    !releaseSigningProperties.getProperty(it).isNullOrBlank()
+}
+val requestedReleaseBuild = gradle.startParameter.taskNames.any {
+    it.lowercase().contains("release")
+}
 
 android {
     namespace = "com.bird.starryskyteahouse"
@@ -22,8 +42,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            if (hasReleaseSigningProperties) {
+                storeFile = file(releaseSigningProperties.getProperty("RELEASE_STORE_FILE"))
+                storePassword = releaseSigningProperties.getProperty("RELEASE_STORE_PASSWORD")
+                keyAlias = releaseSigningProperties.getProperty("RELEASE_KEY_ALIAS")
+                keyPassword = releaseSigningProperties.getProperty("RELEASE_KEY_PASSWORD")
+            }
+        }
+    }
     buildTypes {
         release {
+            if (hasReleaseSigningProperties) {
+                signingConfig = signingConfigs.getByName("release")
+            } else if (requestedReleaseBuild) {
+                throw GradleException("Release signing properties are missing from local.properties")
+            }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

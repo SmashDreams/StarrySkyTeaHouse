@@ -44,4 +44,16 @@ class ProjectStructureTest {
         assertTrue(File("src/main/java/com/bird/starryskyteahouse/MainActivity.kt").isFile)
         assertFalse(manifest.contains("com.bird.StarrySkyTeaHouse"))
     }
+
+    @Test
+    fun releaseBuildUsesLocalSigningProperties() {
+        val buildFile = File("build.gradle.kts").readText()
+
+        assertTrue(buildFile.contains("RELEASE_STORE_FILE"))
+        assertTrue(buildFile.contains("RELEASE_STORE_PASSWORD"))
+        assertTrue(buildFile.contains("RELEASE_KEY_ALIAS"))
+        assertTrue(buildFile.contains("RELEASE_KEY_PASSWORD"))
+        assertTrue(buildFile.contains("signingConfigs"))
+        assertTrue(buildFile.contains("signingConfig = signingConfigs.getByName(\"release\")"))
+    }
 }

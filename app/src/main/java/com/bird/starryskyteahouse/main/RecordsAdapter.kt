@@ -107,8 +107,13 @@ private class MessageViewHolder(context: Context) : RecyclerView.ViewHolder(
 
 private class SummaryViewHolder(context: Context) : RecyclerView.ViewHolder(
     LinearLayout(context).apply {
-        orientation = LinearLayout.HORIZONTAL
-        gravity = Gravity.CENTER
+        orientation = LinearLayout.VERTICAL
+        setBackgroundResource(R.drawable.bg_records_panel_solid)
+        setPadding(dp(context, 16), dp(context, 14), dp(context, 16), dp(context, 14))
+        layoutParams = RecyclerView.LayoutParams(
+            RecyclerView.LayoutParams.MATCH_PARENT,
+            RecyclerView.LayoutParams.WRAP_CONTENT
+        )
     }
 ) {
     private val mContext = context
@@ -116,44 +121,78 @@ private class SummaryViewHolder(context: Context) : RecyclerView.ViewHolder(
 
     fun bind(item: RecordsListItem.Summary) {
         mContainer.removeAllViews()
-        addSummaryItem(
-            mContext.getString(R.string.records_summary_completed),
-            item.summary.completedCount.toString()
-        )
-        addSummaryItem(
-            mContext.getString(R.string.records_summary_highest),
-            mContext.getString(R.string.records_level_badge, item.summary.highestLevel)
-        )
-        addSummaryItem(
-            mContext.getString(R.string.records_summary_latest),
-            mContext.getString(R.string.records_level_badge, item.summary.latestLevel)
-        )
+        mContainer.addView(createSummaryPanel(item.summary))
     }
 
-    private fun addSummaryItem(label: String, value: String) {
-        val item = LinearLayout(mContext).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER
-            setBackgroundResource(R.drawable.bg_record_summary)
-            setPadding(dp(mContext, 8), dp(mContext, 10), dp(mContext, 8), dp(mContext, 10))
-            addView(createText(mContext, value, R.color.tea_gold, 15f, bold = true))
-            addView(createText(mContext, label, R.color.tea_muted, 11f))
-        }
-        mContainer.addView(
-            item,
-            LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
-                marginEnd = dp(mContext, 8)
+    private fun createSummaryPanel(summary: GameRecordSummary): LinearLayout {
+        return LinearLayout(mContext).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            val completedBlock = LinearLayout(mContext).apply {
+                orientation = LinearLayout.VERTICAL
+                gravity = Gravity.CENTER
+                setBackgroundResource(R.drawable.bg_record_summary_primary)
+                setPadding(dp(mContext, 12), dp(mContext, 12), dp(mContext, 12), dp(mContext, 12))
+                addView(createText(mContext, summary.completedCount.toString(), R.color.tea_gold, 24f, bold = true).apply {
+                    gravity = Gravity.CENTER
+                    setSingleLine(true)
+                })
+                addView(createText(mContext, mContext.getString(R.string.records_summary_completed), R.color.tea_mist, 11f).apply {
+                    gravity = Gravity.CENTER
+                    setSingleLine(true)
+                })
             }
-        )
+            addView(completedBlock, LinearLayout.LayoutParams(dp(mContext, 78), dp(mContext, 72)))
+
+            val details = LinearLayout(mContext).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(dp(mContext, 12), 0, 0, 0)
+                addView(
+                    createSummaryDetail(
+                        mContext.getString(R.string.records_summary_highest),
+                        mContext.getString(R.string.records_level_badge, summary.highestLevel),
+                        R.color.tea_leaf
+                    )
+                )
+                addView(
+                    createSummaryDetail(
+                        mContext.getString(R.string.records_summary_latest),
+                        mContext.getString(R.string.records_level_badge, summary.latestLevel),
+                        R.color.tea_gold
+                    ),
+                    LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply { topMargin = dp(mContext, 8) }
+                )
+            }
+            addView(details, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+        }
+    }
+
+    private fun createSummaryDetail(label: String, value: String, valueColorRes: Int): LinearLayout {
+        return LinearLayout(mContext).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setBackgroundResource(R.drawable.bg_record_summary)
+            setPadding(dp(mContext, 12), dp(mContext, 7), dp(mContext, 12), dp(mContext, 7))
+            addView(createText(mContext, label, R.color.tea_muted, 11f).apply { setSingleLine(true) })
+            addView(
+                createText(mContext, value, valueColorRes, 13f, bold = true).apply {
+                    gravity = Gravity.END
+                    setSingleLine(true)
+                },
+                LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            )
+        }
     }
 }
 
 private class RecordViewHolder(context: Context) : RecyclerView.ViewHolder(
     LinearLayout(context).apply {
-        orientation = LinearLayout.HORIZONTAL
-        gravity = Gravity.CENTER_VERTICAL
+        orientation = LinearLayout.VERTICAL
         setBackgroundResource(R.drawable.bg_record_item)
-        setPadding(dp(context, 14), dp(context, 14), dp(context, 14), dp(context, 14))
+        setPadding(dp(context, 14), dp(context, 12), dp(context, 14), dp(context, 12))
     }
 ) {
     private val mContext = context
@@ -162,22 +201,21 @@ private class RecordViewHolder(context: Context) : RecyclerView.ViewHolder(
     fun bind(item: RecordsListItem.Record) {
         mContainer.removeAllViews()
         val record = item.record
-        val badge = createText(
-            mContext,
-            mContext.getString(R.string.records_level_badge, record.level),
-            R.color.tea_gold,
-            15f,
-            bold = true
-        ).apply {
-            gravity = Gravity.CENTER
-            setBackgroundResource(R.drawable.bg_record_badge)
+        val header = LinearLayout(mContext).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
         }
-        mContainer.addView(badge, LinearLayout.LayoutParams(dp(mContext, 72), dp(mContext, 58)))
+        header.addView(
+            createText(
+                mContext,
+                mContext.getString(R.string.records_level_badge, record.level),
+                R.color.tea_gold,
+                14f,
+                bold = true
+            ).apply { setSingleLine(true) },
+            LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+        )
 
-        val content = LinearLayout(mContext).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(dp(mContext, 12), 0, 0, 0)
-        }
         val statusText = if (record.completed) {
             mContext.getString(R.string.record_completed)
         } else {
@@ -188,59 +226,57 @@ private class RecordViewHolder(context: Context) : RecyclerView.ViewHolder(
         } else {
             R.drawable.bg_record_status_pending
         }
-        content.addView(
-            createText(mContext, statusText, R.color.tea_mist, 13f, bold = true).apply {
+        header.addView(
+            createText(mContext, statusText, R.color.tea_mist, 11f, bold = true).apply {
                 setBackgroundResource(statusBackground)
-                setPadding(dp(mContext, 10), dp(mContext, 5), dp(mContext, 10), dp(mContext, 5))
-            },
-            LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                setPadding(dp(mContext, 10), dp(mContext, 4), dp(mContext, 10), dp(mContext, 4))
+                setSingleLine(true)
+            }
         )
-
-        val metrics = LinearLayout(mContext).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER_VERTICAL
-        }
-        metrics.addView(
-            createMetric(
-                mContext.getString(R.string.records_elapsed_label),
-                mContext.getString(R.string.records_seconds, record.elapsedSeconds)
-            )
-        )
-        metrics.addView(
-            createMetric(
-                mContext.getString(R.string.records_remaining_label),
-                mContext.getString(R.string.records_seconds, record.remainingSeconds)
-            )
-        )
-        content.addView(
-            metrics,
+        mContainer.addView(header)
+        mContainer.addView(
+            createRecordInfoLine(record),
             LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                topMargin = dp(mContext, 10)
-            }
+            ).apply { topMargin = dp(mContext, 8) }
         )
-
-        mContainer.addView(content, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
         mContainer.layoutParams = RecyclerView.LayoutParams(
             RecyclerView.LayoutParams.MATCH_PARENT,
             RecyclerView.LayoutParams.WRAP_CONTENT
         ).apply {
-            topMargin = if (item.hasTopMargin) dp(mContext, 10) else dp(mContext, 14)
+            topMargin = if (item.hasTopMargin) dp(mContext, 8) else dp(mContext, 12)
         }
     }
 
-    private fun createMetric(label: String, value: String): LinearLayout {
+    private fun createRecordInfoLine(record: GameRecord): LinearLayout {
         return LinearLayout(mContext).apply {
-            orientation = LinearLayout.VERTICAL
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
             setBackgroundResource(R.drawable.bg_record_metric)
-            setPadding(dp(mContext, 10), dp(mContext, 8), dp(mContext, 10), dp(mContext, 8))
-            addView(createText(mContext, label, R.color.tea_muted, 11f))
-            addView(createText(mContext, value, R.color.tea_mist, 13f, bold = true))
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
-                marginEnd = dp(mContext, 8)
-            }
+            setPadding(dp(mContext, 12), dp(mContext, 9), dp(mContext, 12), dp(mContext, 9))
+            addView(
+                createText(
+                    mContext,
+                    "${mContext.getString(R.string.records_elapsed_label)} ${mContext.getString(R.string.records_seconds, record.elapsedSeconds)}",
+                    R.color.tea_mist,
+                    12.5f,
+                    bold = true
+                ).apply { setSingleLine(true) },
+                LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            )
+            addView(
+                createText(
+                    mContext,
+                    "${mContext.getString(R.string.records_remaining_label)} ${mContext.getString(R.string.records_seconds, record.remainingSeconds)}",
+                    R.color.tea_muted,
+                    12f
+                ).apply {
+                    gravity = Gravity.END
+                    setSingleLine(true)
+                },
+                LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            )
         }
     }
 }
